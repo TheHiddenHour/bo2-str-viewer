@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 using PS3Lib;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace cod_str_viewer {
     public partial class MainForm : Form {
@@ -32,9 +34,9 @@ namespace cod_str_viewer {
         }
 
         private void GetStringsButton_Click(object sender, EventArgs e) {
-            if(!BgWorker.IsBusy) {
+            if(!SearchBgWorker.IsBusy) {
                 ClearStrings();
-                BgWorker.RunWorkerAsync();
+                SearchBgWorker.RunWorkerAsync();
             }
         }
 
@@ -83,7 +85,6 @@ namespace cod_str_viewer {
             StringEntry entry;
 
             /* For some reason, we have to reconnect and reattach here */
-            PS3 = new PS3API(SelectAPI.TargetManager);
             PS3.ConnectTarget();
             PS3.AttachProcess();
 
@@ -104,8 +105,8 @@ namespace cod_str_viewer {
         }
 
         private void BgWorker_ProgressChanged(object sender, ProgressChangedEventArgs e) {
-            toolStripProgressBar1.Value = e.ProgressPercentage;
-            toolStripStatusLabel2.Text = e.ProgressPercentage.ToString() + "%";
+            SearchProgressBar.Value = e.ProgressPercentage;
+            SearchPercentLabel.Text = e.ProgressPercentage.ToString() + "%";
         }
 
         private void BgWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
@@ -116,10 +117,24 @@ namespace cod_str_viewer {
                 foreach(StringEntry entry in StringsList) { // Populate strings listbox 
                     StringsListBox.Items.Add(entry.Text);
                 }
-                toolStripProgressBar1.Value = 0; // Clear progress bar
-                toolStripStatusLabel2.Text = "0%"; // Reset progress percentage 
+                SearchProgressBar.Value = 0; // Clear progress bar
+                SearchPercentLabel.Text = "0%"; // Reset progress percentage 
 
                 MessageBox.Show("Fetched all strings", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            }
+        }
+
+        private void SaveStringsButton_Click(object sender, EventArgs e) {
+            SaveFileDialog saveDialog = new SaveFileDialog {
+                Filter = "json files (*.json)|*.json|All Files (*.*)|*.*",
+                FilterIndex = 0,
+                RestoreDirectory = true
+            };
+
+            if(saveDialog.ShowDialog() == DialogResult.OK) {
+                string jsonStr = JsonConvert.SerializeObject(StringsList, Formatting.Indented);
+                File.WriteAllText(saveDialog.FileName, jsonStr);
+                MessageBox.Show("Saved results to JSON", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
         }
     }

@@ -42,11 +42,12 @@
             this.GetStringsButton = new System.Windows.Forms.Button();
             this.StringCountInput = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
-            this.BgWorker = new System.ComponentModel.BackgroundWorker();
+            this.SearchBgWorker = new System.ComponentModel.BackgroundWorker();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
-            this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.SearchProgressBar = new System.Windows.Forms.ToolStripProgressBar();
+            this.SearchPercentLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.SaveStringsButton = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -63,7 +64,8 @@
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripDropDownButton1,
-            this.ClearListButton});
+            this.ClearListButton,
+            this.SaveStringsButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(584, 25);
@@ -85,14 +87,14 @@
             // ConnectButton
             // 
             this.ConnectButton.Name = "ConnectButton";
-            this.ConnectButton.Size = new System.Drawing.Size(154, 22);
+            this.ConnectButton.Size = new System.Drawing.Size(180, 22);
             this.ConnectButton.Text = "Connect Target";
             this.ConnectButton.Click += new System.EventHandler(this.ConnectButton_Click);
             // 
             // AttachButton
             // 
             this.AttachButton.Name = "AttachButton";
-            this.AttachButton.Size = new System.Drawing.Size(154, 22);
+            this.AttachButton.Size = new System.Drawing.Size(180, 22);
             this.AttachButton.Text = "Attach Process";
             this.AttachButton.Click += new System.EventHandler(this.AttachButton_Click);
             // 
@@ -274,19 +276,19 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Strings to Read";
             // 
-            // BgWorker
+            // SearchBgWorker
             // 
-            this.BgWorker.WorkerReportsProgress = true;
-            this.BgWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BgWorker_DoWork);
-            this.BgWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.BgWorker_ProgressChanged);
-            this.BgWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BgWorker_RunWorkerCompleted);
+            this.SearchBgWorker.WorkerReportsProgress = true;
+            this.SearchBgWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BgWorker_DoWork);
+            this.SearchBgWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.BgWorker_ProgressChanged);
+            this.SearchBgWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BgWorker_RunWorkerCompleted);
             // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1,
-            this.toolStripProgressBar1,
-            this.toolStripStatusLabel2});
+            this.SearchProgressBar,
+            this.SearchPercentLabel});
             this.statusStrip1.Location = new System.Drawing.Point(0, 337);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(584, 22);
@@ -299,16 +301,26 @@
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(58, 17);
             this.toolStripStatusLabel1.Text = "Progress: ";
             // 
-            // toolStripProgressBar1
+            // SearchProgressBar
             // 
-            this.toolStripProgressBar1.Name = "toolStripProgressBar1";
-            this.toolStripProgressBar1.Size = new System.Drawing.Size(100, 16);
+            this.SearchProgressBar.Name = "SearchProgressBar";
+            this.SearchProgressBar.Size = new System.Drawing.Size(100, 16);
             // 
-            // toolStripStatusLabel2
+            // SearchPercentLabel
             // 
-            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            this.toolStripStatusLabel2.Size = new System.Drawing.Size(23, 17);
-            this.toolStripStatusLabel2.Text = "0%";
+            this.SearchPercentLabel.Name = "SearchPercentLabel";
+            this.SearchPercentLabel.Size = new System.Drawing.Size(23, 17);
+            this.SearchPercentLabel.Text = "0%";
+            // 
+            // SaveStringsButton
+            // 
+            this.SaveStringsButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.SaveStringsButton.Image = ((System.Drawing.Image)(resources.GetObject("SaveStringsButton.Image")));
+            this.SaveStringsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.SaveStringsButton.Name = "SaveStringsButton";
+            this.SaveStringsButton.Size = new System.Drawing.Size(74, 22);
+            this.SaveStringsButton.Text = "Save Strings";
+            this.SaveStringsButton.Click += new System.EventHandler(this.SaveStringsButton_Click);
             // 
             // MainForm
             // 
@@ -358,11 +370,12 @@
         private System.Windows.Forms.NumericUpDown PointerInput;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button GetStringsButton;
-        private System.ComponentModel.BackgroundWorker BgWorker;
+        private System.ComponentModel.BackgroundWorker SearchBgWorker;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
-        private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar1;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
+        private System.Windows.Forms.ToolStripProgressBar SearchProgressBar;
+        private System.Windows.Forms.ToolStripStatusLabel SearchPercentLabel;
+        private System.Windows.Forms.ToolStripButton SaveStringsButton;
     }
 }
 
