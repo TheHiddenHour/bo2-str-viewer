@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows.Forms;
 using PS3Lib;
 
@@ -31,28 +32,9 @@ namespace cod_str_viewer {
         }
 
         private void GetStringsButton_Click(object sender, EventArgs e) {
-            Console.WriteLine("Dumping strings...");
-            ClearStrings();
-
-            uint pointerAddress = StringPointersBegin;
-            StringEntry entry;
-
-            for(int i = 0; i < StringCountInput.Value; i++) {
-                uint dataAddress = PS3.Extension.ReadUInt32(pointerAddress);
-                string str = PS3.Extension.ReadString(dataAddress);
-                entry = new StringEntry {
-                    PointerAddress = pointerAddress,
-                    DataAddress = dataAddress,
-                    Text = str
-                };
-
-                StringsList.Add(entry);
-                pointerAddress += 4; // Move address to pointer in memory 
-            }
-
-            // Populate listbox with entries 
-            foreach(StringEntry item in StringsList) {
-                StringsListBox.Items.Add(item.Text);
+            if(!BgWorker.IsBusy) {
+                ClearStrings();
+                BgWorker.RunWorkerAsync();
             }
         }
 
@@ -67,19 +49,20 @@ namespace cod_str_viewer {
 
         private void ConnectButton_Click(object sender, EventArgs e) {
             if(PS3.ConnectTarget()) {
-                MessageBox.Show("Connected", "Connected to target", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                MessageBox.Show("Connected to target", "Connected", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
             else {
-                MessageBox.Show("Error", "Could not connect to target", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                MessageBox.Show("Could not connect to target", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
             }
         }
 
         private void AttachButton_Click(object sender, EventArgs e) {
             if(PS3.AttachProcess()) {
-                MessageBox.Show("Attached", "Attached to process", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                MessageBox.Show("Attached to process", "Attached", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                groupBox2.Enabled = true;
             }
             else {
-                MessageBox.Show("Error", "Could not attach to process", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                MessageBox.Show("Could not attach to process", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
             }
         }
 
@@ -91,6 +74,53 @@ namespace cod_str_viewer {
             StringEntry entry = StringsList[StringsListBox.SelectedIndex];
 
             PS3.Extension.WriteString(entry.DataAddress, StringTextInput.Text);
+        }
+
+        private void BgWorker_DoWork(object sender, DoWorkEventArgs e) {
+            BackgroundWorker worker = sender as BackgroundWorker;
+
+            uint pointerAddress = StringPointersBegin;
+            StringEntry entry;
+
+            /* For some reason, we have to reconnect and reattach here */
+            PS3 = new PS3API(SelectAPI.TargetManager);
+            PS3.ConnectTarget();
+            PS3.AttachProcess();
+
+            for (int i = 0; i < StringCountInput.Value; i++) {
+                // Get string entry 
+                uint dataAddress = PS3.Extension.ReadUInt32(pointerAddress);
+                string str = PS3.Extension.ReadString(dataAddress);
+                entry = new StringEntry {
+                    PointerAddress = pointerAddress,
+                    DataAddress = dataAddress,
+                    Text = str
+                };
+
+                StringsList.Add(entry); // Add string to list 
+                pointerAddress += 4; // Move address to pointer in memory 
+                worker.ReportProgress((int)(i / StringCountInput.Value * 100)); // Report precent progress 
+            }
+        }
+
+        private void BgWorker_ProgressChanged(object sender, ProgressChangedEventArgs e) {
+            toolStripProgressBar1.Value = e.ProgressPercentage;
+            toolStripStatusLabel2.Text = e.ProgressPercentage.ToString() + "%";
+        }
+
+        private void BgWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
+            if(e.Error != null) {
+                MessageBox.Show("Could not fetch strings", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+            }
+            else {
+                foreach(StringEntry entry in StringsList) { // Populate strings listbox 
+                    StringsListBox.Items.Add(entry.Text);
+                }
+                toolStripProgressBar1.Value = 0; // Clear progress bar
+                toolStripStatusLabel2.Text = "0%"; // Reset progress percentage 
+
+                MessageBox.Show("Fetched all strings", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            }
         }
     }
 }

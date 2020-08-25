@@ -42,6 +42,11 @@
             this.GetStringsButton = new System.Windows.Forms.Button();
             this.StringCountInput = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
+            this.BgWorker = new System.ComponentModel.BackgroundWorker();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
+            this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStrip1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -51,6 +56,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.DataInput)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PointerInput)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.StringCountInput)).BeginInit();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStrip1
@@ -104,9 +110,10 @@
             // 
             this.groupBox2.Controls.Add(this.splitContainer1);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox2.Enabled = false;
             this.groupBox2.Location = new System.Drawing.Point(0, 25);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(584, 236);
+            this.groupBox2.Size = new System.Drawing.Size(584, 312);
             this.groupBox2.TabIndex = 3;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Strings";
@@ -134,7 +141,7 @@
             this.splitContainer1.Panel2.Controls.Add(this.GetStringsButton);
             this.splitContainer1.Panel2.Controls.Add(this.StringCountInput);
             this.splitContainer1.Panel2.Controls.Add(this.label1);
-            this.splitContainer1.Size = new System.Drawing.Size(578, 217);
+            this.splitContainer1.Size = new System.Drawing.Size(578, 293);
             this.splitContainer1.SplitterDistance = 335;
             this.splitContainer1.TabIndex = 0;
             // 
@@ -144,7 +151,7 @@
             this.StringsListBox.FormattingEnabled = true;
             this.StringsListBox.Location = new System.Drawing.Point(0, 0);
             this.StringsListBox.Name = "StringsListBox";
-            this.StringsListBox.Size = new System.Drawing.Size(333, 215);
+            this.StringsListBox.Size = new System.Drawing.Size(333, 291);
             this.StringsListBox.TabIndex = 0;
             this.StringsListBox.SelectedIndexChanged += new System.EventHandler(this.StringsListBox_SelectedIndexChanged);
             // 
@@ -267,13 +274,50 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Strings to Read";
             // 
+            // BgWorker
+            // 
+            this.BgWorker.WorkerReportsProgress = true;
+            this.BgWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BgWorker_DoWork);
+            this.BgWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.BgWorker_ProgressChanged);
+            this.BgWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BgWorker_RunWorkerCompleted);
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel1,
+            this.toolStripProgressBar1,
+            this.toolStripStatusLabel2});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 337);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(584, 22);
+            this.statusStrip1.TabIndex = 4;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(58, 17);
+            this.toolStripStatusLabel1.Text = "Progress: ";
+            // 
+            // toolStripProgressBar1
+            // 
+            this.toolStripProgressBar1.Name = "toolStripProgressBar1";
+            this.toolStripProgressBar1.Size = new System.Drawing.Size(100, 16);
+            // 
+            // toolStripStatusLabel2
+            // 
+            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(23, 17);
+            this.toolStripStatusLabel2.Text = "0%";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(584, 261);
+            this.ClientSize = new System.Drawing.Size(584, 359);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.toolStrip1);
+            this.Controls.Add(this.statusStrip1);
             this.Name = "MainForm";
             this.Text = "cod-str-viewer";
             this.Load += new System.EventHandler(this.MainForm_Load);
@@ -288,6 +332,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.DataInput)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PointerInput)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.StringCountInput)).EndInit();
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -312,6 +358,11 @@
         private System.Windows.Forms.NumericUpDown PointerInput;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button GetStringsButton;
+        private System.ComponentModel.BackgroundWorker BgWorker;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
     }
 }
 
